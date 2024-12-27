@@ -280,7 +280,12 @@ func (ac appCreator) newApp(
 	chainID := cast.ToString(appOpts.Get(flags.FlagChainID))
 	if chainID == "" {
 		// fallback to genesis chain-id
-		appGenesis, err := genutiltypes.AppGenesisFromFile(filepath.Join(homeDir, cast.ToString(appOpts.Get("genesis_file"))))
+		appGenesisPath := cast.ToString(appOpts.Get("genesis_file"))
+		if !filepath.IsAbs(appGenesisPath) {
+			appGenesisPath = filepath.Join(homeDir, appGenesisPath)
+		}
+
+		appGenesis, err := genutiltypes.AppGenesisFromFile(appGenesisPath)
 		if err != nil {
 			panic(err)
 		}
